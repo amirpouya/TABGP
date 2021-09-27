@@ -18,6 +18,7 @@ cargo run --release --example partial-clock ./configs/simple_conf.toml
 
 ## Input Schema
 Edge(edge.csv): eid: usize , src: usize, dst: usize, first: usize 
+
 Active(active.csv): eid: usize, time: usize
 
 
