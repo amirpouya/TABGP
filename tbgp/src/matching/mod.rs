@@ -22,6 +22,8 @@ pub struct Matching {
 
 }
 
+
+
 impl Matching {
     pub fn new(mid: usize, eid: [usize; 5], first: usize, match_size: usize, last: usize,) -> Self {
         Self {
@@ -36,7 +38,7 @@ impl Matching {
         }
     }
 
-    pub fn emptyMatch() -> Vec<Matching>{
+    pub fn empty_match() -> Vec<Matching>{
         // Empty matching
 
         let m = Matching{mid:0, eid:[0,0,0,0,0],first: 0, last:0, match_size:0,state:0,word:0, clocks:[0,0,0,0,0]};
@@ -151,6 +153,7 @@ impl Matching {
 
 
     pub fn cycle_two(edges: Vec<Edge>) -> Vec<Matching> {
+        println!("I am here");
         let edges_src = edges.iter()
             .map(|e| (e.src.clone(), e.clone()));
 
@@ -243,5 +246,48 @@ impl Matching {
 
 
 
+
+}
+
+
+
+#[derive(Debug)]
+#[derive(Clone, Copy)]
+pub struct PMatching {
+    pub mid: usize,
+    pub eid: [usize; 5],
+    pub first: usize,
+    pub last: usize,
+    pub match_size: usize,
+    pub head: usize,
+    pub head_idx: i8,
+    pub tail: usize,
+    pub tail_idx: i8,
+    pub state: usize,
+    pub word: usize,
+    pub clocks:[usize;5]
+}
+
+impl PMatching{
+
+
+    pub fn fill_array(val: usize, idx: i8, inp: [usize; 5]) -> [usize; 5] {
+
+        if idx == -1  {
+            println!("{:?}",inp)
+        }
+        let mut out = inp;
+        out[idx as usize] = val;
+        return out;
+    }
+
+    pub fn fill_array_with_vec(val: Vec<usize>, idx: usize, inp: [usize; 5]) -> [usize; 5] {
+        let mut out = inp;
+        val.iter().enumerate().for_each(|(i, e)| (
+            {
+                out[idx + i] = *e;
+            }));
+        return out;
+    }
 
 }

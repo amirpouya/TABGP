@@ -1,12 +1,13 @@
-input_dir = "data/epl/"
-nfa_dir = "data/nfa/nfa-3-connected.csv"
+input_dir = "data-old/eu-email/"
+#input_dir = "data/graphs/epl/"
+nfa_dir = "data/nfa/ta2.csv"
 debug =    0 # 0  For nothing - 10 for everything
-#pattern_type = "cycle2"
+pattern_type = "cycle_two"
 #pattern_type = "triangles_WOJ"
-pattern_type = "rectangle_woj"
+#pattern_type = "rectangle_woj"
 #pattern_type = "path2"
 #pattern_type = "path3"
 #pattern_type = "path4"
 
 
-pattern_size = 4
+pattern_size = 2

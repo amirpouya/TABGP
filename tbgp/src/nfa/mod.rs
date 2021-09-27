@@ -2,8 +2,8 @@ use std::fs::File;
 use std::path::Path;
 use std::io::{BufReader, BufRead};
 use crate::active::Active;
-use crate::matching::Matching;
-use itertools::{ EitherOrBoth, Itertools};
+use crate::matching::{Matching, PMatching};
+use itertools::{ Itertools};
 use crate::join::hash_join;
 use std::collections::{HashMap, HashSet};
 use std::collections::hash_map::RandomState;
@@ -15,7 +15,6 @@ pub struct NFA {
     pub current_state: usize,
     pub word: usize,
     pub next_state: usize,
-    pub accept: usize,
 }
 
 
@@ -27,7 +26,6 @@ impl NFA {
             current_state,
             word,
             next_state,
-            accept,
         }
     }
     pub fn get_from_file(filename: &str) -> Vec<NFA>
@@ -48,13 +46,11 @@ impl NFA {
                 let current_state: usize = elements.next().unwrap().parse().ok().expect("malformed src");
                 let word: usize = elements.next().unwrap().parse().ok().expect("malformed src");
                 let next_state: usize = elements.next().unwrap().parse().ok().expect("malformed src");
-                let accept: usize = elements.next().unwrap_or("0").parse().ok().expect("malformed src");
 
                 let n = NFA {
                     current_state,
                     word,
                     next_state,
-                    accept,
                 };
                 nfa.push(n)
             }
@@ -82,13 +78,11 @@ impl NFA {
                 let current_state: usize = elements.next().unwrap().parse().ok().expect("malformed src");
                 let word: usize = elements.next().unwrap().parse().ok().expect("malformed src");
                 let next_state: usize = elements.next().unwrap().parse().ok().expect("malformed src");
-                let accept: usize = elements.next().unwrap_or("0").parse().ok().expect("malformed src");
 
                 let n = NFA {
                     current_state,
                     word,
                     next_state,
-                    accept,
                 };
                 nfa.entry((n.current_state, n.word)).or_insert_with(Vec::new).push(n.next_state);
             }
@@ -112,7 +106,7 @@ impl NFA {
 
     pub fn gen_alpha_hash(active: &Vec<Active>, matching: &Vec<Matching>, matching_size: usize) -> Vec<(usize, usize)> {
         //generate alphabet based on Actives and matching size for all the matching
-        let mut a0 = matching.iter().map(|m| (m.mid, m.eid)).collect_vec();
+        let  a0 = matching.iter().map(|m| (m.mid, m.eid)).collect_vec();
         let mut active_pair: HashSet<usize> = HashSet::from_iter(active.iter().map(|a| a.eid.clone()));
         active_pair.remove(&0);
         let alpha = a0.into_iter().map(|(mid, eid)| (mid,
@@ -152,12 +146,12 @@ impl NFA {
 
 
 
-    pub fn apply_nfa(nfa_join: &Vec<((usize, usize), (usize, usize))>, current_matching: &Vec<Matching>) -> Vec<Matching> {
+    pub fn apply_nfa(nfa_join: &Vec<((usize, usize), (usize))>, current_matching: &Vec<Matching>) -> Vec<Matching> {
 
         let first:Vec<((usize,usize),Matching)> = current_matching.iter().map(|c| ((c.state,c.word), c.clone())).collect_vec();
         let res = hash_join(&first, &nfa_join)
             .into_iter()
-            .map(|(m, (_, _), (next_state, _))| (Matching {
+            .map(|(m, (_, _), (next_state))| (Matching {
                 mid: m.mid,
                 eid: m.eid,
                 first: m.first,
@@ -171,27 +165,54 @@ impl NFA {
         return res;
     }
 
+    pub fn apply_partial_nfa(nfa_join: &Vec<((usize, usize), (usize))>, matching: &Vec<PMatching>) -> Vec<PMatching> {
+        let first = matching.iter().map(|c| ((c.state, c.word), c.clone())).collect_vec();
+
+
+        let res = hash_join(&first, &nfa_join)
+            .into_iter()
+
+            .map(|(c, (_, _), (next_state))| PMatching {
+                mid: c.mid,
+                eid: c.eid,
+                first: c.first,
+                last: c.last,
+                match_size: c.match_size,
+                head: c.head,
+                head_idx: c.head_idx,
+                tail: c.tail,
+                tail_idx: c.tail_idx,
+                state:next_state,
+                word: c.word,
+                clocks: c.clocks
+            })
+            .collect_vec();
+
+        return res;
+    }
+
+
 
     pub fn alt_nfa_gen(nfa_size: usize, matching_size: usize, init_loop: bool, self_loop: bool) -> Vec<NFA>
     {
         let mut nfas: Vec<NFA> = vec![];
         let mut w;
         if init_loop {
-            let nfa = NFA { current_state: 0, word: 0, next_state: 0, accept: 0 };
+            let nfa = NFA { current_state: 0, word: 0, next_state: 0, };
             nfas.push(nfa);
         }
         for i in 0..nfa_size {
             if self_loop {
-                let nfa = NFA { current_state: i + 1, word: 0, next_state: i + 1, accept: 0 };
+                let nfa = NFA { current_state: i + 1, word: 0, next_state: i + 1,  };
                 nfas.push(nfa);
             }
 
             w = u32::pow(10, (matching_size - (i % matching_size) - 1) as u32);
-            let nfa = NFA { current_state: i, word: w as usize, next_state: i + 1, accept: 0 };
+            let nfa = NFA { current_state: i, word: w as usize, next_state: i + 1,  };
             nfas.push(nfa);
         }
         w = u32::pow(10, (matching_size - (nfa_size % matching_size) - 1) as u32);
-        let nfa = NFA { current_state: nfa_size, word: w as usize, next_state: 0, accept: 0 };
+        let nfa = NFA { current_state: nfa_size, word: w as usize, next_state: 0,  };
         nfas.push(nfa);
         return nfas;
     }
@@ -200,19 +221,19 @@ impl NFA {
     pub fn nfa_clock_gen(clock: usize) -> Vec<NFA> {
         //Simulate a clock by adding states
         let mut nfas: Vec<NFA> = vec![];
-        let nfa = NFA { current_state: 0, word: 0 as usize, next_state: 0, accept: 0 };
+        let nfa = NFA { current_state: 0, word: 0 as usize, next_state: 0,  };
         nfas.push(nfa);
 
-        let nfa = NFA { current_state: 0, word: 1 as usize, next_state: 2, accept: 0 };
+        let nfa = NFA { current_state: 0, word: 1 as usize, next_state: 2,  };
         nfas.push(nfa);
 
-        let nfa = NFA { current_state: 2, word: 10 as usize, next_state: 0, accept: 1 };
+        let nfa = NFA { current_state: 2, word: 10 as usize, next_state: 0,  };
         nfas.push(nfa);
         for i in 2..clock + 2 {
-            let nfa = NFA { current_state: i, word: 00 as usize, next_state: i + 1, accept: 0 };
+            let nfa = NFA { current_state: i, word: 00 as usize, next_state: i + 1, };
             nfas.push(nfa);
 
-            let nfa = NFA { current_state: i + 1, word: 10 as usize, next_state: 0, accept: 1 };
+            let nfa = NFA { current_state: i + 1, word: 10 as usize, next_state: 0, };
             nfas.push(nfa);
         }
         nfas

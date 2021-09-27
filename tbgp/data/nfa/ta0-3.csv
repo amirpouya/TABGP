@@ -1,0 +1,8 @@
+#state, [y1y2], next state, clock_set, clock_func,clock cond
+0,000,0
+1,000,1
+2,000,2
+0,100,1
+1,010,2
+2,001,0
+
