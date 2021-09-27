@@ -30,6 +30,7 @@ TA: state, [y1y2], next_state, clock_set, clock_func,clock_cond
 
 Example (data/nfa/ta2.csv which represents the temporal automaton TA_2 introduced in the paper).
 
-#Datasets 
-EPL
-https://github.com/jalapic/engsoccerdata
+#Datasets
+
+-EPL. https://github.com/jalapic/engsoccerdata
+
