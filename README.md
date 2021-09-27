@@ -1,6 +1,7 @@
 # TABGP
 Protype for Sigmod Submition.
 
+## How to run? 
 
 cargo run --release --example baseline ./configs/simple_conf.toml
 
