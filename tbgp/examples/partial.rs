@@ -37,7 +37,7 @@ fn main() {
     //Set these flags based on the NFA
     let inc_flag = false; // Incremental NFA
     let dec_flag = false; // Decremental NFA
-    let eq_flag =true; // Equal NFA 
+    let eq_flag =false; // Equal NFA
 
 
     let config_addr = std::env::args().nth(1).unwrap_or(("configs/simple_conf.toml").to_string()).parse::<String>().unwrap();
@@ -537,21 +537,6 @@ fn main() {
                     log(format!("Path3 at time {:?},{:?}", &current_time, &path3_matching_eq), 5, DEBUG_FLAG);
                 }
 
-
-                let p2 = dede.iter().map(|(e1, _, e2)| PMatching {
-                    mid: 0,
-                    eid: [e1.eid, e2.eid, 0, 0, 0],
-                    first: e1.first,
-                    last: e2.first,
-                    match_size: 2,
-                    head: e1.src,
-                    head_idx: 0,
-                    tail: e2.dst,
-                    tail_idx: 1,
-                    state: 0,
-                    word: 0,
-                    clocks: [0,0,0,0,0]
-                });
                 full_mid_counter = mid_counter - full_mid_counter;
 
             }
@@ -1035,9 +1020,9 @@ fn main() {
             current_active.push(a);
         }
     }
-    let full_matching = matching.iter().filter(|m| m.match_size == pattern_size && m.eid[0] != 0).map(|m| (m.mid,m.eid)).collect_vec();
-    log(format!("Full Matching {:?}", &full_matching), 4, DEBUG_FLAG);
-    log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), full_matching.len(),droped_match+full_matching.len()), 0, DEBUG_FLAG);
+    let full_matching = matching.iter().filter(|m| m.match_size == pattern_size && m.eid[0] != 0).map(|m| (m.eid)).sorted_by(|m1,m2|m1.cmp(m2)).collect_vec();
+    log(format!("Full Matching {:?}", &full_matching), 1, DEBUG_FLAG);
+    log(format!("{:?},{:?}", now.elapsed().as_secs_f32(), full_matching.len()), 0, DEBUG_FLAG);
 
 
     // let mut f = File::create("part.csv").unwrap();

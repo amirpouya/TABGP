@@ -151,8 +151,9 @@ fn main() {
 
     log(format!("Total Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);
     log(format!("Pattern_type, num_matching, matching_time, total_time"),0,DEBUG_FLAG);
+    let full_matching = current_matching.iter().filter(|m| m.match_size == pattern_size && m.eid[0] != 0).map(|m| (m.eid)).sorted_by(|m1,m2|m1.cmp(m2)).collect_vec();
 
-    log(format!("Full Matching {:?},{:?}", now.elapsed().as_secs_f32(), current_matching), 10, DEBUG_FLAG);
+    log(format!("Full Matching {:?},{:?}", now.elapsed().as_secs_f32(), full_matching), 1, DEBUG_FLAG);
 
     log(format!("{},{},{},{}",pattern_type.clone(),current_matching.len(),matching_time, now.elapsed().as_secs_f32()),0,DEBUG_FLAG);
     log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), current_matching.len(),num_matching), 0, DEBUG_FLAG);

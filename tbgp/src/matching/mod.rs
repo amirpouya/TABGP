@@ -100,7 +100,7 @@ impl Matching {
                         let yz = src_dst.get(&(y, z)).unwrap();
                         let t = Matching::find_first(&vec![xy, zx, yz]);
                         let tf = Matching::find_last(&vec![xy, zx, yz]);
-                        matching.push(Matching { mid, eid: [xy.eid, zx.eid, yz.eid, 0, 0],
+                        matching.push(Matching { mid, eid: [xy.eid, yz.eid,zx.eid, 0, 0],
                             first: t, last: tf, match_size: 3, state:0 ,word:0,clocks:[0,0,0,0,0]});
                         mid = mid + 1;
                     }
@@ -134,12 +134,12 @@ impl Matching {
                         if w != x && x != y && y != z && x != z {
                             let wx = src_dst.get(&(w, x)).unwrap();
                             let xy = src_dst.get(&(x, y)).unwrap();
-                            let wz = src_dst.get(&(z, w)).unwrap();
+                            let zw = src_dst.get(&(z, w)).unwrap();
                             let yz = src_dst.get(&(y, z)).unwrap();
-                            let t = Matching::find_first(&vec![wx, xy, wz, yz]);
-                            let tf = Matching::find_last(&vec![wx, xy, wz, yz]);
+                            let t = Matching::find_first(&vec![wx, xy, yz, zw]);
+                            let tf = Matching::find_last(&vec![wx, xy, yz, zw]);
 
-                            matching.push(Matching { mid, eid: [wx.eid, xy.eid, wz.eid, yz.eid, 0, ],
+                            matching.push(Matching { mid, eid: [wx.eid, xy.eid, yz.eid, zw.eid, 0, ],
                                 //edge_hist:[wx.first, xy.first, wz.first, yz.first, 0, ],
                                 first: t, last: tf, match_size: 4 , state:0,word:0,clocks:[0,0,0,0,0]});
                             mid = mid + 1;
