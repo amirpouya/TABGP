@@ -20,6 +20,7 @@ impl  Active {
     }
     pub fn get_from_file(filename:&str) -> Vec<Active>
     {
+        let mut t = 0;
         let mut active: Vec<Active> = vec![] ;
         let mut data_line = match File::open(&Path::new(&filename)) {
             Ok(file) => BufReader::new(file).lines(),
@@ -35,9 +36,12 @@ impl  Active {
                 let eid:usize = elements.next().unwrap().parse().ok().expect("malformed src");
                 let time:usize = elements.next().unwrap().parse().ok().expect("malformed src");
                 let a = Active{ eid, time };
-                active.push(a)
+                active.push(a);
+                t = time;
             }
         }
+
+        active.push(Active{eid:0,time: t+1});
         return active;
     }
 

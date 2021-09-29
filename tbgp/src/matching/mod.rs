@@ -244,6 +244,104 @@ impl Matching {
     }
 
 
+    pub fn path_two_dm(eid:usize, e: Vec<Edge>, de:Vec<Edge>) -> (usize,Vec<Matching>) {
+        //TODO: Optimize for different cases
+        let mut eid_max = eid;
+        let e_src = e.iter()
+            .map(|e| (e.src.clone(), e.clone()));
+
+        let e_dst = e.iter()
+            .map(|e| (e.dst.clone(), e.clone()));
+
+        let de_src = de.iter()
+            .map(|e| (e.src.clone(), e.clone()));
+
+        let de_dst = de.iter()
+            .map(|e| (e.dst.clone(), e.clone()));
+
+
+        let mut e_de = hash_join(&e_dst.collect_vec(), &de_src.clone().collect_vec())
+            .iter()
+            .enumerate()
+            .map(|(i, (x, _, y))| Matching { mid: eid_max + i + 1, eid: [x.eid, y.eid, 0, 0, 0],
+                //edge_hist: [x.first, y.first, 0, 0, 0],
+                first: min(x.first, y.first), last: max(x.first, y.first), match_size: 2, state:0,word:0 ,clocks:[0,0,0,0,0]}).collect_vec();
+        eid_max = eid_max + e_de.len();
+
+        let mut de_e = hash_join(&de_dst.clone().collect_vec(), &e_src.collect_vec())
+            .iter()
+            .enumerate()
+            .map(|(i, (x, _, y))| Matching { mid: eid_max + i + 1, eid: [x.eid, y.eid, 0, 0, 0],
+                //edge_hist: [x.first, y.first, 0, 0, 0],
+                first: min(x.first, y.first), last: max(x.first, y.first), match_size: 2, state:0,word:0 ,clocks:[0,0,0,0,0]}).collect_vec();
+        eid_max = eid_max + de_e.len();
+
+        let mut de_de =  hash_join(&de_dst.collect_vec(), &de_src.collect_vec())
+            .iter()
+            .enumerate()
+            .map(|(i, (x, _, y))| Matching { mid: eid_max +  i + 1, eid: [x.eid, y.eid, 0, 0, 0],
+                //edge_hist: [x.first, y.first, 0, 0, 0],
+                first: min(x.first, y.first), last: max(x.first, y.first), match_size: 2, state:0,word:0 ,clocks:[0,0,0,0,0]}).collect_vec();
+        eid_max = eid_max + de_de.len();
+
+
+        e_de.append(&mut de_e);
+        e_de.append(&mut de_de);
+        return (eid_max, e_de);
+    }
+
+
+    pub fn cycle_two_dm(eid:usize, e: Vec<Edge>, de:Vec<Edge>) -> (usize,Vec<Matching>) {
+        //TODO: Optimize for different cases
+        let mut eid_max = eid;
+        let e_src = e.iter()
+            .map(|e| (e.src.clone(), e.clone()));
+
+        let e_dst = e.iter()
+            .map(|e| (e.dst.clone(), e.clone()));
+
+        let de_src = de.iter()
+            .map(|e| (e.src.clone(), e.clone()));
+
+        let de_dst = de.iter()
+            .map(|e| (e.dst.clone(), e.clone()));
+
+
+        let mut e_de = hash_join(&e_dst.collect_vec(), &de_src.clone().collect_vec())
+            .iter()
+            .filter(|(x,_,y)| x.src == y.dst )
+            .enumerate()
+            .map(|(i, (x, _, y))| Matching { mid: eid_max + i + 1, eid: [x.eid, y.eid, 0, 0, 0],
+                //edge_hist: [x.first, y.first, 0, 0, 0],
+                first: min(x.first, y.first), last: max(x.first, y.first), match_size: 2, state:0,word:0 ,clocks:[0,0,0,0,0]}).collect_vec();
+        eid_max = eid_max + e_de.len();
+
+        let mut de_e = e_de
+            .iter()
+            .enumerate()
+            .map(|(i,m)| Matching { mid: eid_max + i + 1, eid: [m.eid[1], m.eid[0], 0, 0, 0],
+                //edge_hist: [x.first, y.first, 0, 0, 0],
+                first: m.first, last: m.last, match_size: 2, state:0,word:0 ,clocks:[0,0,0,0,0]}).collect_vec();
+        eid_max = eid_max + de_e.len();
+
+        let mut de_de =  hash_join(&de_dst.collect_vec(), &de_src.collect_vec())
+            .iter()
+            .filter(|(x,_,y)| x.src == y.dst )
+            .enumerate()
+            .map(|(i, (x, _, y))| Matching { mid: eid_max +  i + 1, eid: [x.eid, y.eid, 0, 0, 0],
+                //edge_hist: [x.first, y.first, 0, 0, 0],
+                first: min(x.first, y.first), last: max(x.first, y.first), match_size: 2, state:0,word:0 ,clocks:[0,0,0,0,0]}).collect_vec();
+        eid_max = eid_max + de_de.len();
+
+
+        e_de.append(&mut de_e);
+        e_de.append(&mut de_de);
+        return (eid_max, e_de);
+    }
+
+
+
+
 
 
 }
