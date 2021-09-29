@@ -1,10 +1,12 @@
-use crate::nfa::NFA;
-use std::io::{BufReader, BufRead};
 use std::fs::File;
+use std::io::{BufRead, BufReader};
 use std::path::Path;
-use crate::join::hash_join;
+
 use itertools::Itertools;
+
+use crate::join::hash_join;
 use crate::matching::{Matching, PMatching};
+use crate::nfa::NFA;
 
 #[derive(Debug)]
 #[derive(Clone, Copy)]

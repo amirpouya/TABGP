@@ -1,0 +1,7 @@
+input_dir = "data/graphs/eu-email/"
+nfa_dir = "data/nfa/ta0-3.csv"
+debug =    0 # 0  For nothing - 10 for everything
+
+pattern_type = "path3"
+
+pattern_size = 3

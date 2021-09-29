@@ -1,23 +1,22 @@
 extern crate tbgp;
 
-use std::time::{ Instant};
-
-
-use tbgp::edge::Edge;
-use tbgp::active::Active;
-use itertools::{Itertools};
-use tbgp::matching::Matching;
-use std::hash::Hash;
-use std::collections::{HashSet, HashMap};
-use itertools::__std_iter::FromIterator;
-use tbgp::configs;
-use tbgp::tnfa::{State_Matching, TNFA};
-use std::path::Path;
-use std::fs::File;
+use std::collections::{HashMap, HashSet};
 use std::fs;
+use std::fs::File;
+use std::hash::Hash;
 use std::io::Write;
-use tbgp::nfa::NFA;
+use std::path::Path;
+use std::time::Instant;
 
+use itertools::Itertools;
+use itertools::__std_iter::FromIterator;
+
+use tbgp::active::Active;
+use tbgp::configs;
+use tbgp::edge::Edge;
+use tbgp::matching::Matching;
+use tbgp::nfa::NFA;
+use tbgp::tnfa::{State_Matching, TNFA};
 
 fn main() {
     fn apply_nfa(current_time:usize, active:&HashMap<usize,HashSet<usize>>, nfa:Vec<TNFA>, m:&Vec<Matching>, pattern_size: usize) -> Vec<Matching>

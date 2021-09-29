@@ -1,20 +1,19 @@
 extern crate tbgp;
 
-use std::time::{Instant};
-
-
-use tbgp::edge::Edge;
-use tbgp::nfa::NFA;
-use tbgp::active::Active;
-use itertools::{Itertools};
-use tbgp::matching::Matching;
 use std::collections::HashSet;
-use itertools::__std_iter::FromIterator;
-use tbgp::configs;
 use std::fs::File;
 use std::io::Write;
-use tbgp::tnfa::TNFA;
+use std::time::Instant;
 
+use itertools::Itertools;
+use itertools::__std_iter::FromIterator;
+
+use tbgp::active::Active;
+use tbgp::configs;
+use tbgp::edge::Edge;
+use tbgp::matching::Matching;
+use tbgp::nfa::NFA;
+use tbgp::tnfa::TNFA;
 
 fn main() {
 
@@ -83,7 +82,6 @@ fn main() {
     let mut current_time = 1;
     let mut current_active:Vec<Active> = vec![];
     let mut current_matching = matching.clone().into_iter().filter(|m| m.first==current_time).collect_vec();
-    //let mut current_matching = NFA::add_state_to_matching(&min_matching);
 
 
     for a in actives{
@@ -106,8 +104,7 @@ fn main() {
                                                               ], pattern_size);
 
 
-                //let alpha = NFA::gen_alpha(&active_pair, &current_matching, pattern_size);
-               // log(format!("alpha at {:?}: {:?}", &current_time, &alpha), 3, DEBUG_FLAG);
+
             }
             current_matching = TNFA::apply_nfa(current_time,&nfa_join,&current_matching);
 
@@ -142,8 +139,6 @@ fn main() {
                                                       ], pattern_size);
 
 
-        //let alpha = NFA::gen_alpha(&active_pair, &current_matching, pattern_size);
-        // log(format!("alpha at {:?}: {:?}", &current_time, &alpha), 3, DEBUG_FLAG);
     }
     current_matching = TNFA::apply_nfa(current_time,&nfa_join,&current_matching);
     let processed_match = current_matching.iter().filter(|m| m.last <= current_time).count();

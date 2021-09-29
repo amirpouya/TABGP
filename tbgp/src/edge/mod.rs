@@ -1,8 +1,8 @@
-use std::fs::File;
-use std::path::Path;
-use std::io::{BufReader, BufRead};
 use std::collections::{HashMap, HashSet};
 use std::collections::hash_map::RandomState;
+use std::fs::File;
+use std::io::{BufRead, BufReader};
+use std::path::Path;
 
 #[derive(Debug)]
 #[derive(Clone, Copy)]

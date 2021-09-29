@@ -1,5 +1,6 @@
-use std::hash::Hash;
 use std::collections::{HashMap, HashSet};
+use std::hash::Hash;
+
 use itertools::Itertools;
 
 // If you know one of the tables is smaller, it is best to make it the second parameter.

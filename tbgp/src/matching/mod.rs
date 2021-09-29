@@ -1,12 +1,11 @@
+use std::cmp::{max, min};
+use std::collections::HashSet;
 
+use array_tool::vec::Intersect;
+use itertools::Itertools;
 
 use crate::edge::Edge;
-use itertools::{Itertools};
-use array_tool::vec::Intersect;
-use std::collections::HashSet;
-use std::cmp::{min, max};
 use crate::join::hash_join;
-
 
 #[derive(Debug)]
 #[derive(Clone,Copy)]

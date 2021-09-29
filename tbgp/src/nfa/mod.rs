@@ -1,13 +1,15 @@
-use std::fs::File;
-use std::path::Path;
-use std::io::{BufReader, BufRead};
-use crate::active::Active;
-use crate::matching::{Matching, PMatching};
-use itertools::{ Itertools};
-use crate::join::hash_join;
 use std::collections::{HashMap, HashSet};
 use std::collections::hash_map::RandomState;
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 use std::iter::FromIterator;
+use std::path::Path;
+
+use itertools::Itertools;
+
+use crate::active::Active;
+use crate::join::hash_join;
+use crate::matching::{Matching, PMatching};
 
 #[derive(Debug)]
 #[derive(Clone, Copy)]

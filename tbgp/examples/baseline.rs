@@ -1,19 +1,18 @@
 extern crate tbgp;
 
-use std::time::{Instant};
-
-
-use tbgp::edge::Edge;
-use tbgp::nfa::NFA;
-use tbgp::active::Active;
-use itertools::{Itertools};
-use tbgp::matching::Matching;
 use std::collections::HashSet;
-use itertools::__std_iter::FromIterator;
-use tbgp::configs;
 use std::fs::File;
 use std::io::Write;
+use std::time::Instant;
 
+use itertools::Itertools;
+use itertools::__std_iter::FromIterator;
+
+use tbgp::active::Active;
+use tbgp::configs;
+use tbgp::edge::Edge;
+use tbgp::matching::Matching;
+use tbgp::nfa::NFA;
 
 fn main() {
 

@@ -1,6 +1,6 @@
 use std::fs::File;
+use std::io::{BufRead, BufReader};
 use std::path::Path;
-use std::io::{BufReader, BufRead};
 
 #[derive(Debug)]
 #[derive(Clone, Copy)]

@@ -2,26 +2,25 @@
 
 extern crate tbgp;
 
+use std::cmp::{max, min};
+use std::collections::{HashMap, HashSet};
+use std::fs::File;
+use std::hash::Hash;
+use std::io::Write;
+use std::ptr::hash;
 use std::time::{Duration, Instant};
 
-
-use tbgp::edge::Edge;
-use tbgp::nfa::{NFA};
-use tbgp::active::Active;
-use itertools::{Itertools, merge_join_by, EitherOrBoth};
 use array_tool::vec::Intersect;
-use tbgp::matching::{Matching, PMatching};
-use tbgp::join::hash_join;
-use std::hash::Hash;
-use std::ptr::hash;
-use std::collections::{HashSet, HashMap};
+use itertools::{EitherOrBoth, Itertools, merge_join_by};
 use itertools::__std_iter::FromIterator;
-use tbgp::configs;
-use std::cmp::{min, max};
-use std::fs::File;
-use std::io::Write;
-use tbgp::tnfa::TNFA;
 
+use tbgp::active::Active;
+use tbgp::configs;
+use tbgp::edge::Edge;
+use tbgp::join::hash_join;
+use tbgp::matching::{Matching, PMatching};
+use tbgp::nfa::NFA;
+use tbgp::tnfa::TNFA;
 
 fn main() {
 
