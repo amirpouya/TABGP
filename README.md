@@ -22,9 +22,9 @@ cargo run --release --example partial-clock ./configs/simple_conf.toml
 
 
 ## Input Schema
-- Edge(edge.csv): eid: usize , src: usize, dst: usize, first: usize 
+- Edge(edge.csv): **eid**: usize , src: usize, dst: usize, first: usize 
 
-- Active(active.csv): eid: usize, time: usize
+- Active(active.csv): **eid**: usize, **time**: usize
 
 Example: data/graphs/ex1 (represent the graph in Figure 1 in the paper).
 
