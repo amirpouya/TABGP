@@ -25,7 +25,7 @@ use tbgp::nfa::NFA;
 fn main() {
 
     let mut droped_match = 0;
-
+    let dedup_flag = true;
     let loop_flag:usize = 0;
 
     
@@ -200,8 +200,8 @@ fn main() {
 
 
             //E size one
-            let matching_head = matching.clone().iter().filter(|m| m.head_idx >= 0 && m.match_size == 1).map(|m| (m.head, m.clone())).collect_vec();
-            let matching_tail = matching.clone().iter().filter(|m| m.tail_idx >= 0 && m.match_size == 1).map(|m| (m.tail, m.clone())).collect_vec();
+            let matching_head = matching.iter().filter(|m| m.head_idx >= 0 && m.match_size == 1).map(|m| (m.head, m.clone())).collect_vec();
+            let matching_tail = matching.iter().filter(|m| m.tail_idx >= 0 && m.match_size == 1).map(|m| (m.tail, m.clone())).collect_vec();
 
 
             //Delta E
@@ -1000,10 +1000,10 @@ fn main() {
             log(format!("Matching at time {:?},{:?}", &current_time, &matching), 4, DEBUG_FLAG);
 
             let  matching_count = matching.iter().filter(|m|m.match_size == pattern_size).count();
-            matching = NFA::apply_partial_nfa(&nfa_join, &matching);
+            matching = NFA::apply_partial_nfa(&nfa_join, &matching,dedup_flag);
             droped_match = matching_count - matching.iter().filter(|m|m.match_size == pattern_size).count();
             //let dic_state_2 = matching.iter().filter(|c| c.mid == 0).map(|m| m.state.clone()).collect_vec();
-            dic_state.insert([0,0,0,0,0],matching.clone().iter().filter(|c| c.mid == 0).map(|m| m.state.clone()).collect_vec());
+            dic_state.insert([0,0,0,0,0],matching.iter().filter(|c| c.mid == 0).map(|m| m.state.clone()).collect_vec());
 
 
             current_time = a.time;

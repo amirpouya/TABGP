@@ -148,10 +148,10 @@ impl NFA {
 
 
 
-    pub fn apply_nfa(nfa_join: &Vec<((usize, usize), (usize))>, current_matching: &Vec<Matching>) -> Vec<Matching> {
+    pub fn apply_nfa(nfa_join: &Vec<((usize, usize), (usize))>, current_matching: &Vec<Matching>, dedup:bool) -> Vec<Matching> {
 
         let first:Vec<((usize,usize),Matching)> = current_matching.iter().map(|c| ((c.state,c.word), c.clone())).collect_vec();
-        let res = hash_join(&first, &nfa_join)
+        let mut res = hash_join(&first, &nfa_join)
             .into_iter()
             .map(|(m, (_, _), (next_state))| (Matching {
                 mid: m.mid,
@@ -164,14 +164,17 @@ impl NFA {
                 clocks:m.clocks,
             }))
             .collect_vec();
+        if dedup {
+            res.dedup_by(|m1, m2| m1.eid == m2.eid && m1.state == m2.state);
+        }
         return res;
     }
 
-    pub fn apply_partial_nfa(nfa_join: &Vec<((usize, usize), (usize))>, matching: &Vec<PMatching>) -> Vec<PMatching> {
+    pub fn apply_partial_nfa(nfa_join: &Vec<((usize, usize), (usize))>, matching: &Vec<PMatching>,dedup:bool) -> Vec<PMatching> {
         let first = matching.iter().map(|c| ((c.state, c.word), c.clone())).collect_vec();
 
 
-        let res = hash_join(&first, &nfa_join)
+        let mut res = hash_join(&first, &nfa_join)
             .into_iter()
 
             .map(|(c, (_, _), (next_state))| PMatching {
@@ -189,7 +192,9 @@ impl NFA {
                 clocks: c.clocks
             })
             .collect_vec();
-
+        if dedup {
+            res.dedup_by(|m1, m2| m1.eid == m2.eid && m1.state == m2.state);
+        }
         return res;
     }
 

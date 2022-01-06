@@ -19,7 +19,9 @@ use tbgp::nfa::NFA;
 use tbgp::tnfa::State_Matching;
 
 fn main() {
-    fn apply_nfa(current_time:usize, active:&HashMap<usize,HashSet<usize>>, nfa:Vec<NFA>, m:&Vec<Matching>, pattern_size: usize) -> Vec<Matching>
+    let dedup_flag = true;
+
+    fn apply_nfa(current_time:usize, active:&HashMap<usize,HashSet<usize>>, nfa:Vec<NFA>, m:&Vec<Matching>, pattern_size: usize,dedup_flag:bool) -> Vec<Matching>
     {
         if &m.len() <= &0
         {
@@ -33,7 +35,7 @@ fn main() {
 
         for t in td {
 
-            let mut new_matching = m.clone().into_iter().filter(|m| m.first == t.clone()).collect_vec();
+            let mut new_matching = m.iter().filter(|m| m.first == t.clone()).cloned().collect_vec();
 
             current_matching.append(&mut new_matching);
             let active_pair = active.get(&t).unwrap();
@@ -49,10 +51,10 @@ fn main() {
 
 
             }
-            current_matching = NFA::apply_nfa(&nfa_join, &current_matching);
+            current_matching = NFA::apply_nfa(&nfa_join, &current_matching,dedup_flag);
 
         }
-         let mut new_matching = m.clone().into_iter().filter(|m|  m.first == current_time).collect_vec();
+         let mut new_matching = m.iter().filter(|m|  m.first == current_time).cloned().collect_vec();
         current_matching.append(&mut new_matching);
         return current_matching;
     }
@@ -105,14 +107,8 @@ fn main() {
 
 
 
-    let  matching = match &pattern_type[..]{
-        "cycle_two" => Matching::cycle_two(edges.clone()),
-        "triangles_WOJ"=> Matching::triangles_woj(edges.clone()),
-        "rectangle_woj" => Matching::rectangle_woj(edges.clone()),
-        "path4" => Matching::path_four(edges.clone()),
-        "path3" => Matching::path_three(edges.clone()),
-        "path2" | _ => Matching::path_two(edges.clone()),
-    };
+    let matching = Matching::MatchGen(edges, &pattern_type);
+
 
     let num_matching = matching.clone().len();
     let matching_time = now.elapsed().as_secs_f32();
@@ -127,8 +123,8 @@ fn main() {
     active_hist.insert(0,HashSet::new());
 
     let mut all_matching:Vec<Matching> = vec![];
-    let mut current_matching = matching.clone().into_iter().filter(|m| m.last==current_time).collect_vec();
-    current_matching = apply_nfa(0,&active_hist,nfa.clone(),&current_matching,pattern_size);
+    let mut current_matching = matching.iter().filter(|m| m.last==current_time).cloned().collect_vec();
+    current_matching = apply_nfa(0,&active_hist,nfa.clone(),&current_matching,pattern_size,dedup_flag);
 
     for a in actives{
 
@@ -138,9 +134,9 @@ fn main() {
             let  active_pair: HashSet<usize> = HashSet::from_iter(current_active.iter().map(|a| a.eid.clone()));
 
             log(format!("current matching at {:?}: {:?}",current_time, &current_matching),5,DEBUG_FLAG);
-            let  processed_matchg_count = matching.clone().into_iter().filter(|m| m.last<=current_time).count();
+            let  processed_matchg_count = matching.iter().filter(|m| m.last<=current_time).cloned().count();
 
-           current_matching  = apply_nfa(current_time,&active_hist,nfa.clone(),&current_matching,pattern_size);
+           current_matching  = apply_nfa(current_time,&active_hist,nfa.clone(),&current_matching,pattern_size,dedup_flag);
 
             log(format!("delta matching at {:?}: {:?}",&current_time, &current_matching),5,DEBUG_FLAG);
 
@@ -154,16 +150,10 @@ fn main() {
                                                                   active_pair.contains(&eid[3]),
                                                                   active_pair.contains(&eid[4]),
                                                               ], pattern_size);
-
-
-
             }
-
-
-
             active_hist.insert(current_time,active_pair);
 
-            all_matching = NFA::apply_nfa(&nfa_join, &all_matching);
+            all_matching = NFA::apply_nfa(&nfa_join, &all_matching,dedup_flag);
 
             log(format!("matching at {:?}: {:?}",&current_time, &all_matching),5,DEBUG_FLAG);
             log(format!("#matching at  {:?}: {:?}",&current_time, &all_matching.len()),1,DEBUG_FLAG);
@@ -173,7 +163,7 @@ fn main() {
 
             current_time = a.time;
             current_active = vec![];
-            current_matching = matching.clone().into_iter().filter(|m| m.last==current_time).collect_vec();
+            current_matching = matching.iter().filter(|m| m.last==current_time).cloned().collect_vec();
 
             accepted_matching = accepted_matching + all_matching.iter().filter(|x| x.state == 0).count();
 
@@ -184,7 +174,7 @@ fn main() {
 
     //Final run for the last time point
     log(format!("delta matching at {:?}: {:?}",&current_time, &current_matching),5,DEBUG_FLAG);
-    current_matching  = apply_nfa(current_time,&active_hist,nfa.clone(),&current_matching,pattern_size);
+    current_matching  = apply_nfa(current_time,&active_hist,nfa.clone(),&current_matching,pattern_size,dedup_flag);
     log(format!("delta matching at {:?}: {:?}",&current_time, &current_matching),5,DEBUG_FLAG);
 
     let  active_pair: HashSet<usize> = HashSet::from_iter(current_active.iter().map(|a| a.eid.clone()));
@@ -203,7 +193,7 @@ fn main() {
 
 
     }
-    all_matching = NFA::apply_nfa(&nfa_join, &all_matching);
+    all_matching = NFA::apply_nfa(&nfa_join, &all_matching,dedup_flag);
     let  processed_matchg_count = matching.clone().into_iter().filter(|m| m.last<=current_time).count();
     log(format!("{:?},{:?},{:?}",now.elapsed(),&current_time, &processed_matchg_count),0,DEBUG_FLAG);
 
@@ -218,11 +208,7 @@ fn main() {
 
     log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), all_matching.len(),num_matching), 0, DEBUG_FLAG);
 
-    // let mut f = File::create("od.csv").unwrap();
-    // for m in all_matching{
-    //    f.write(format!(" {:?}\n", m).as_ref());
-    //
-    // }
+
 
 }
 

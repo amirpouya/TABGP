@@ -34,6 +34,7 @@ impl  TNFA {
         fn all_true(current_time:usize,inp:[usize;5],cond_val:usize) -> bool {  return true}
         fn all_false(current_time:usize,inp:[usize;5],cond_val:usize) -> bool {  return false}
         fn xpass_0(current_time:usize,inp:[usize;5],cond_val:usize) -> bool {  return current_time - inp[0] < cond_val}
+        fn xpass_1(current_time:usize,inp:[usize;5],cond_val:usize) -> bool {  return current_time - inp[0] > cond_val}
 
 
 
@@ -63,6 +64,7 @@ impl  TNFA {
                 let clock_func= match &clock_func_raw[..]{
                         "false" => all_false,
                         "x0pass" => xpass_0,
+                        "x1pass" => xpass_1,
                         "true" | _ => all_true
                     };
                 let clock_cond:usize = elements.next().unwrap_or("0").parse().ok().expect("malformed src");

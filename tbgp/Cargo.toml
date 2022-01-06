@@ -10,7 +10,7 @@ edition = "2018"
 itertools = "*"
 array_tool ="*"
 serde = { version = "1.0", features = ["derive"] }
-toml = "*"
+toml = "0.5.6"
 ndarray = "*"
 
 

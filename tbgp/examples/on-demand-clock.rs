@@ -105,16 +105,10 @@ fn main() {
 
 
 
-    let  matching = match &pattern_type[..]{
-        "cycle_two" => Matching::cycle_two(edges.clone()),
-        "triangles_WOJ"=> Matching::triangles_woj(edges.clone()),
-        "rectangle_woj" => Matching::rectangle_woj(edges.clone()),
-        "path4" => Matching::path_four(edges.clone()),
-        "path3" => Matching::path_three(edges.clone()),
-        "path2" | _ => Matching::path_two(edges.clone()),
-    };
+    let matching = Matching::MatchGen(edges, &pattern_type);
 
-    let num_matching = matching.clone().len();
+
+    let num_matching = &matching.len();
     let matching_time = now.elapsed().as_secs_f32();
 
     log(format!("Matching{:?}", &matching), 5,DEBUG_FLAG);
@@ -127,7 +121,7 @@ fn main() {
     active_hist.insert(0,HashSet::new());
 
     let mut all_matching:Vec<Matching> = vec![];
-    let mut current_matching = matching.clone().into_iter().filter(|m| m.last==current_time).collect_vec();
+    let mut current_matching = matching.iter().filter(|m| m.last==current_time).cloned().collect_vec();
     //let mut current_matching = NFA::add_state_to_matching(&min_matching);
     current_matching = apply_nfa(0,&active_hist,nfa.clone(),&current_matching,pattern_size);
 
@@ -139,7 +133,7 @@ fn main() {
             let  active_pair: HashSet<usize> = HashSet::from_iter(current_active.iter().map(|a| a.eid.clone()));
 
             log(format!("current matching at {:?}: {:?}",current_time, &current_matching),5,DEBUG_FLAG);
-            let  processed_matchg_count = matching.clone().into_iter().filter(|m| m.last<=current_time).count();
+            let  processed_matchg_count = matching.iter().filter(|m| m.last<=current_time).cloned().count();
 
            current_matching  = apply_nfa(current_time,&active_hist,nfa.clone(),&current_matching,pattern_size);
 
@@ -174,7 +168,7 @@ fn main() {
 
             current_time = a.time;
             current_active = vec![];
-            current_matching = matching.clone().into_iter().filter(|m| m.last==current_time).collect_vec();
+            current_matching = matching.iter().filter(|m| m.last==current_time).cloned().collect_vec();
 
             accepted_matching = accepted_matching + all_matching.iter().filter(|x| x.state == 0).count();
 
@@ -205,7 +199,7 @@ fn main() {
 
     }
     all_matching = TNFA::apply_nfa(current_time,&nfa_join, &all_matching);
-    let  processed_matchg_count = matching.clone().into_iter().filter(|m| m.last<=current_time).count();
+    let  processed_matchg_count = matching.iter().filter(|m| m.last<=current_time).count();
     log(format!("{:?},{:?},{:?}",now.elapsed(),&current_time, &processed_matchg_count),0,DEBUG_FLAG);
 
     log(format!("Total Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);

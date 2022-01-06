@@ -62,15 +62,8 @@ fn main() {
 
 
 
-    let  matching = match &pattern_type[..]{
-        "triangles_WOJ"=> Matching::triangles_woj(edges.clone()),
-        "rectangle_woj" => Matching::rectangle_woj(edges.clone()),
-        "path4" => Matching::path_four(edges.clone()),
-        "path3" => Matching::path_three(edges.clone()),
-        "path2"  => Matching::path_two(edges.clone()),
-        "cycle_two" | _ => Matching::cycle_two(edges.clone()),
+    let matching = Matching::MatchGen(edges, &pattern_type);
 
-    };
 
     let num_matching = matching.len();
     let matching_time = now.elapsed().as_secs_f32();
@@ -81,13 +74,14 @@ fn main() {
 
     let mut current_time = 1;
     let mut current_active:Vec<Active> = vec![];
-    let mut current_matching = matching.clone().into_iter().filter(|m| m.first==current_time).collect_vec();
+    let mut current_matching = matching.iter().filter(|m| m.first==current_time).cloned().collect_vec();
 
+    let mut accept_matching = 0;
 
     for a in actives{
 
         if current_time < a.time{
-            let  processed_matchg_count = matching.clone().into_iter().filter(|m| m.last<=current_time).count();
+            let  processed_matchg_count = matching.iter().filter(|m| m.last<=current_time).count();
 
             log(format!("current matching at {:?}: {:?}",current_time, &current_matching),3,DEBUG_FLAG);
             log(format!("current active at {:?}: {:?}",current_time, &current_active),3,DEBUG_FLAG);
@@ -107,13 +101,13 @@ fn main() {
 
             }
             current_matching = TNFA::apply_nfa(current_time,&nfa_join,&current_matching);
-
-
+            let new_accept_matching = current_matching.iter().filter(|m|m.state==2).count();
+            accept_matching = accept_matching + new_accept_matching;
             current_time = a.time;
             current_active = vec![];
 
 
-            let mut new_matching = matching.clone().into_iter().filter(|m| m.first==current_time).collect_vec();
+            let mut new_matching = matching.iter().filter(|m| m.first==current_time).cloned().collect_vec();
 
             current_matching.append(&mut new_matching);
             log(format!("Matching at {:?},{:?},{:?}",now.elapsed(),&current_time, &current_matching),5,DEBUG_FLAG);
@@ -141,6 +135,8 @@ fn main() {
 
     }
     current_matching = TNFA::apply_nfa(current_time,&nfa_join,&current_matching);
+    let new_accept_matching = current_matching.iter().filter(|m|m.state==2).count();
+    accept_matching = accept_matching + new_accept_matching;
     let processed_match = current_matching.iter().filter(|m| m.last <= current_time).count();
     log(format!("Total Time:{},{},{}", &current_time,now.elapsed().as_secs_f32(),processed_match),0,DEBUG_FLAG);
 
@@ -150,7 +146,7 @@ fn main() {
     log(format!("Full Matching {:?},{:?}", now.elapsed().as_secs_f32(), current_matching), 10, DEBUG_FLAG);
 
     log(format!("{},{},{},{}",pattern_type.clone(),current_matching.len(),matching_time, now.elapsed().as_secs_f32()),0,DEBUG_FLAG);
-    log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), current_matching.len(),num_matching), 0, DEBUG_FLAG);
+    log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), accept_matching,num_matching), 0, DEBUG_FLAG);
 
 
     // let mut f = File::create("base.csv").unwrap();

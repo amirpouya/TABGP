@@ -15,7 +15,7 @@ use tbgp::matching::Matching;
 use tbgp::nfa::NFA;
 
 fn main() {
-
+    let dedup_flag = true;
     let config_addr = std::env::args().nth(1).unwrap_or(("configs/simple_conf.toml").to_string()).parse::<String>().unwrap();
 
     let config = configs::parse(&config_addr);
@@ -61,16 +61,7 @@ fn main() {
     log(format!("Active {:?}", actives),5,DEBUG_FLAG);
 
 
-
-    let  matching = match &pattern_type[..]{
-        "triangles_WOJ"=> Matching::triangles_woj(edges.clone()),
-        "rectangle_woj" => Matching::rectangle_woj(edges.clone()),
-        "path4" => Matching::path_four(edges.clone()),
-        "path3" => Matching::path_three(edges.clone()),
-        "path2"  => Matching::path_two(edges.clone()),
-        "cycle_two" | _ => Matching::cycle_two(edges.clone()),
-
-    };
+    let matching = Matching::MatchGen(edges, &pattern_type);
 
     let num_matching = matching.len();
     let matching_time = now.elapsed().as_secs_f32();
@@ -81,18 +72,19 @@ fn main() {
 
     let mut current_time = 1;
     let mut current_active:Vec<Active> = vec![];
-    let mut current_matching = matching.clone().into_iter().filter(|m| m.first==current_time).collect_vec();
+    let mut current_matching = matching.iter().filter(|m| m.first==current_time).cloned().collect_vec();
     //let mut current_matching = NFA::add_state_to_matching(&min_matching);
 
 
     for a in actives{
 
         if current_time < a.time{
-            let  processed_matchg_count = matching.clone().into_iter().filter(|m| m.last<=current_time).count();
+            let  active_pair: HashSet<usize> = HashSet::from_iter(current_active.iter().map(|a| a.eid.clone()));
+
+            //let  processed_matchg_count = matching.clone().into_iter().filter(|m| m.last<=current_time).count();
 
             log(format!("current matching at {:?}: {:?}",current_time, &current_matching),3,DEBUG_FLAG);
             log(format!("current active at {:?}: {:?}",current_time, &current_active),3,DEBUG_FLAG);
-            let  active_pair: HashSet<usize> = HashSet::from_iter(current_active.iter().map(|a| a.eid.clone()));
 
             for i in 0..current_matching.len() {
                 let eid =current_matching[i].eid.clone();
@@ -104,22 +96,18 @@ fn main() {
                                                                   active_pair.contains(&eid[4]),
                                                               ], pattern_size);
 
-
-                //let alpha = NFA::gen_alpha(&active_pair, &current_matching, pattern_size);
-               // log(format!("alpha at {:?}: {:?}", &current_time, &alpha), 3, DEBUG_FLAG);
             }
-            current_matching = NFA::apply_nfa(&nfa_join, &current_matching);
-
+            current_matching = NFA::apply_nfa(&nfa_join, &current_matching,dedup_flag);
 
             current_time = a.time;
             current_active = vec![];
 
 
-            let mut new_matching = matching.clone().into_iter().filter(|m| m.first==current_time).collect_vec();
+            let mut new_matching = matching.iter().filter(|m| m.first==current_time).cloned().collect_vec();
 
             current_matching.append(&mut new_matching);
             log(format!("Matching at {:?},{:?},{:?}",now.elapsed(),&current_time, &current_matching),5,DEBUG_FLAG);
-            log(format!("{:?},{:?},{:?}",now.elapsed(),&current_time, &processed_matchg_count),11,DEBUG_FLAG);
+            //log(format!("{:?},{:?},{:?}",now.elapsed(),&current_time, &processed_matchg_count),11,DEBUG_FLAG);
 
 
 
@@ -144,15 +132,15 @@ fn main() {
         //let alpha = NFA::gen_alpha(&active_pair, &current_matching, pattern_size);
         // log(format!("alpha at {:?}: {:?}", &current_time, &alpha), 3, DEBUG_FLAG);
     }
-    current_matching = NFA::apply_nfa(&nfa_join, &current_matching);
+    current_matching = NFA::apply_nfa(&nfa_join, &current_matching,dedup_flag);
     let processed_match = current_matching.iter().filter(|m| m.last <= current_time).count();
     log(format!("Total Time:{},{},{}", &current_time,now.elapsed().as_secs_f32(),processed_match),0,DEBUG_FLAG);
 
     log(format!("Total Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);
     log(format!("Pattern_type, num_matching, matching_time, total_time"),0,DEBUG_FLAG);
-    let full_matching = current_matching.iter().filter(|m| m.match_size == pattern_size && m.eid[0] != 0).map(|m| (m.eid)).sorted_by(|m1,m2|m1.cmp(m2)).collect_vec();
+    //let full_matching = current_matching.iter().filter(|m| m.match_size == pattern_size && m.eid[0] != 0 && m.state == 0  ).map(|m| (m.eid)).sorted_by(|m1,m2|m1.cmp(m2)).collect_vec();
 
-    log(format!("Full Matching {:?},{:?}", now.elapsed().as_secs_f32(), full_matching), 1, DEBUG_FLAG);
+    //log(format!("Full Matching {:?},{:?}", now.elapsed().as_secs_f32(), full_matching), 0, DEBUG_FLAG);
 
     log(format!("{},{},{},{}",pattern_type.clone(),current_matching.len(),matching_time, now.elapsed().as_secs_f32()),0,DEBUG_FLAG);
     log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), current_matching.len(),num_matching), 0, DEBUG_FLAG);
