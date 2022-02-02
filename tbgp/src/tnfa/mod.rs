@@ -33,8 +33,8 @@ impl  TNFA {
     {
         fn all_true(current_time:usize,inp:[usize;5],cond_val:usize) -> bool {  return true}
         fn all_false(current_time:usize,inp:[usize;5],cond_val:usize) -> bool {  return false}
-        fn xpass_0(current_time:usize,inp:[usize;5],cond_val:usize) -> bool {  return current_time - inp[0] < cond_val}
-        fn xpass_1(current_time:usize,inp:[usize;5],cond_val:usize) -> bool {  return current_time - inp[0] > cond_val}
+        fn xpass_0(current_time:usize,inp:[usize;5],cond_val:usize) -> bool {  return current_time - inp[0] < cond_val || inp[0] == 0}
+        fn xpass_1(current_time:usize,inp:[usize;5],cond_val:usize) -> bool {  return current_time - inp[0] > cond_val || inp[0] == 0}
 
 
 

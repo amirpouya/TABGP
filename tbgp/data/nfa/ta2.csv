@@ -1,6 +1,6 @@
 #state, [y1y2], next state, clock_set, clock_func,clock_cond
 #Note that clock index starts from 1 ( pass 0 for no op)
-0,00,0,0
+0,00,0,0,true,1
 0,10,1,1,x0pass,3
 1,01,0,1,x0pass,3
-1,00,1,0
+1,00,1,0,ture,1

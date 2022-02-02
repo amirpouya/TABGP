@@ -213,6 +213,10 @@ fn main() {
 
     log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), all_matching.len(),num_matching), 0, DEBUG_FLAG);
 
+
+    let fstate: usize = 2 ;
+    let unique_matching = current_matching.iter().filter(|m| m.state ==2).map(|m| m.eid.clone()).sorted_by(|m1,m2| m1.cmp(m2)).dedup().count();//.for_each(|m| println!("{:?},{:?}",m[0],m[1]));
+    println!("{:?}",unique_matching)
     // let mut f = File::create("od.csv").unwrap();
     // for m in all_matching{
     //    f.write(format!(" {:?}\n", m).as_ref());

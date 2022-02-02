@@ -1,6 +1,6 @@
 extern crate tbgp;
 
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 use std::fs::File;
 use std::io::Write;
 use std::time::Instant;
@@ -13,6 +13,21 @@ use tbgp::configs;
 use tbgp::edge::Edge;
 use tbgp::matching::Matching;
 use tbgp::nfa::NFA;
+
+#[derive(Debug)]
+#[derive(Clone)]
+pub struct NMatching {
+    pub mid: usize,
+    pub eid: [usize; 5],
+    pub first: usize,
+    pub last: usize,
+    pub match_size: usize,
+    pub state: Vec<usize>,
+    pub word: usize,
+    pub clocks: [usize; 5],
+}
+
+
 
 fn main() {
     let dedup_flag = true;
@@ -28,6 +43,8 @@ fn main() {
             println!("{:?}",input);
         }
     }
+
+
 
 
     let now = Instant::now();
@@ -48,10 +65,15 @@ fn main() {
     let  nfa = NFA::get_from_file(&nfa_filename);
     //let nfa_join = nfa.into_iter().map(|n|((n.current_state,n.word),(n.next_state,n.accept))).collect_vec();
 
-
+    let mut nfa_dic = HashMap::new();
+    //
     let nfa_join = nfa.clone().into_iter().map(|n|((n.current_state,n.word),(n.next_state))).collect_vec();
 
 
+    for (i,j) in &nfa_join {
+        // nfa_dic.insert(i,j.clone());
+        nfa_dic.entry(i).or_insert_with(Vec::new).push(j.clone());
+    }
     println!("{:?}",pattern_type.clone());
 
 
@@ -61,8 +83,17 @@ fn main() {
     log(format!("Active {:?}", actives),5,DEBUG_FLAG);
 
 
-    let matching = Matching::MatchGen(edges, &pattern_type);
-
+    let qmatching = Matching::MatchGen(edges, &pattern_type);
+    let matching = qmatching.into_iter().map(|m| NMatching{
+        mid: m.mid,
+        eid: m.eid,
+        first: m.first,
+        last: m.last,
+        match_size: m.match_size,
+        state: vec![m.state],
+        word: m.word,
+        clocks: m.clocks
+    }).collect_vec();
     let num_matching = matching.len();
     let matching_time = now.elapsed().as_secs_f32();
 
@@ -86,18 +117,8 @@ fn main() {
             log(format!("current matching at {:?}: {:?}",current_time, &current_matching),3,DEBUG_FLAG);
             log(format!("current active at {:?}: {:?}",current_time, &current_active),3,DEBUG_FLAG);
 
-            for i in 0..current_matching.len() {
-                let eid =current_matching[i].eid.clone();
-                current_matching[i].word = NFA::bool_to_usize([
-                                                                  active_pair.contains(&eid[0]),
-                                                                  active_pair.contains(&eid[1]),
-                                                                  active_pair.contains(&eid[2]),
-                                                                  active_pair.contains(&eid[3]),
-                                                                  active_pair.contains(&eid[4]),
-                                                              ], pattern_size);
+            apply_nfa(pattern_size, &nfa_dic, &mut current_matching, active_pair);
 
-            }
-            current_matching = NFA::apply_nfa(&nfa_join, &current_matching,dedup_flag);
 
             current_time = a.time;
             current_active = vec![];
@@ -112,39 +133,39 @@ fn main() {
         current_active.push(a);
     }
 
-    // //Final run for the last time point
-    // let  active_pair: HashSet<usize> = HashSet::from_iter(current_active.iter().map(|a| a.eid.clone()));
-    //
-    // for i in 0..current_matching.len() {
-    //     let eid =current_matching[i].eid.clone();
-    //     current_matching[i].word = NFA::bool_to_usize([
-    //                                                       active_pair.contains(&eid[0]),
-    //                                                       active_pair.contains(&eid[1]),
-    //                                                       active_pair.contains(&eid[2]),
-    //                                                       active_pair.contains(&eid[3]),
-    //                                                       active_pair.contains(&eid[4]),
-    //                                                   ], pattern_size);
-    //
-    //
-    //     //let alpha = NFA::gen_alpha(&active_pair, &current_matching, pattern_size);
-    //     // log(format!("alpha at {:?}: {:?}", &current_time, &alpha), 3, DEBUG_FLAG);
-    // }
-    // current_matching = NFA::apply_nfa(&nfa_join, &current_matching,dedup_flag);
-    //let processed_match = current_matching.iter().filter(|m| m.last <= current_time).count();
-    //log(format!("Total Time:{},{},{}", &current_time,now.elapsed().as_secs_f32(),processed_match),0,DEBUG_FLAG);
-
-  //  log(format!("Total Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);
-   // log(format!("Pattern_type, num_matching, matching_time, total_time"),0,DEBUG_FLAG);
 
 
    // log(format!("{},{},{},{}",pattern_type.clone(),current_matching.len(),matching_time, now.elapsed().as_secs_f32()),0,DEBUG_FLAG);
     log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), current_matching.len(),num_matching), 0, DEBUG_FLAG);
 
     let fstate: usize = 2 ;
-    let unique_matching = current_matching.iter().filter(|m| m.state ==2).map(|m| m.eid.clone()).sorted_by(|m1,m2| m1.cmp(m2)).dedup().count();//.for_each(|m| println!("{:?},{:?}",m[0],m[1]));
+    //let unique_matching = current_matching.iter().filter(|m| m.state ==2).map(|m| m.eid.clone()).sorted_by(|m1,m2| m1.cmp(m2)).dedup().count();//.for_each(|m| println!("{:?},{:?}",m[0],m[1]));
 
-    println!("{:?}",unique_matching);
+    //println!("{:?}",unique_matching);
 
+}
+
+fn apply_nfa(pattern_size: usize, mut nfa_dic: &HashMap<&(usize, usize), Vec<usize>>, current_matching: &mut Vec<NMatching>, active_pair: HashSet<usize>)  {
+    for i in 0..current_matching.len() {
+        let mut m = &current_matching[i];
+        let word = NFA::bool_to_usize([
+                                          active_pair.contains(&m.eid[0]),
+                                          active_pair.contains(&m.eid[1]),
+                                          active_pair.contains(&m.eid[2]),
+                                          active_pair.contains(&m.eid[3]),
+                                          active_pair.contains(&m.eid[4]),
+                                      ], pattern_size);
+        let mut state = vec![];
+        let mut a = m.state.clone().into_iter()
+            .filter_map(|n| match nfa_dic.get(&(n, word)) {
+                Some(p) => Some(p.clone()),
+                None => None
+            }).flatten();
+        state.extend(a);
+        state.dedup();
+        current_matching[i].state = state;
+    }
+    current_matching.retain(|m| m.state.len() > 0);
 }
 
 

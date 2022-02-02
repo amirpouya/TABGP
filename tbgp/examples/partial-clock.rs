@@ -32,7 +32,7 @@ fn main() {
     //Set these flags based on the NFA
     let inc_flag = false; // Incremental NFA
     let dec_flag = false; // Decremental NFA
-    let eq_flag =true; // Equal NFA 
+    let eq_flag =true; // Equal NFA
 
 
     let config_addr = std::env::args().nth(1).unwrap_or(("configs/simple_conf.toml").to_string()).parse::<String>().unwrap();

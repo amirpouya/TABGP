@@ -1,9 +1,9 @@
-input_dir = "data/graphs/contact/"
-nfa_dir = "data/nfa/ta8-2.csv"
+input_dir = "data/graphs/epl/"
+nfa_dir = "data/nfa/ta2.csv"
 #nfa_dir = "data/nfa/nfa-multi-path/ta0-1-4.csv"
 debug =    0# 0  For nothing - 10 for everything
 
-#pattern_type = "path2"
+pattern_type = "path2"
 #pattern_type = "path3"
 #pattern_type = "path4"
 #pattern_type = "cycle_two"
@@ -12,7 +12,7 @@ debug =    0# 0  For nothing - 10 for everything
 
 #pattern_type = "instar_2"
 #pattern_type = "instar_3"
-pattern_type = "outstar_2"
+#pattern_type = "outstar_2"
 #pattern_type = "outstar_3"
 
 
