@@ -5,6 +5,3 @@
 #SBATCH --time=4:00:00
 #SBATCH --mem=32GB
 #SBATCH --job-name=expr-test
-#SBATCH --output=expr-test.out
-
-

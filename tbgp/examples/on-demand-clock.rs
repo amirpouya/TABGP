@@ -211,7 +211,7 @@ fn main() {
 
 
 
-    log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), all_matching.len(),num_matching), 0, DEBUG_FLAG);
+    log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), all_matching.len(),num_matching), 1, DEBUG_FLAG);
 
 
     let fstate: usize = 2 ;
