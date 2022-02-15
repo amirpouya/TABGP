@@ -7,7 +7,7 @@ for ds in epl #eu-email facebook
           do
             tfile="configs/toml/$ds.$ta.$patt.toml"
             echo $tfile
-            python configs/config.gen.py -i $ds -t $ta -p $patt -s 2 -d 0 > $tfile
+            python3 configs/config.gen.py -i $ds -t $ta -p $patt -s 2 -d 0 > $tfile
             cp configs/sbatch/sample.sbatch configs/sbatch/$ds.$ta.$patt.sbatch
             echo "sbatch configs/sbatch/$ds.$ta.$patt.sbatch" >> exprs.sh
             for i in {1..3}
@@ -21,7 +21,7 @@ for ds in epl #eu-email facebook
         do
             tfile="configs/toml/$ds.$ta.$patt.toml"
             echo $tfile
-            python configs/config.gen.py -i $ds -t $ta -p $patt -s 2 -d 0 > $tfile
+            python3 configs/config.gen.py -i $ds -t $ta -p $patt -s 2 -d 0 > $tfile
             cp configs/sbatch/sample.sbatch configs/sbatch/$ds.$ta.$patt.sbatch
             echo "sbatch configs/sbatch/$ds.$ta.$patt.sbatch" >> exprs.sh
             for i in {1..3}
@@ -39,7 +39,7 @@ for ds in epl #eu-email facebook
           do
           tfile="configs/toml/$ds.$ta.$patt.toml"
             echo $tfile
-            python configs/config.gen.py -i $ds -t $ta -p $patt -s 3 -d 0 > $tfile
+            python3 configs/config.gen.py -i $ds -t $ta -p $patt -s 3 -d 0 > $tfile
             cp configs/sbatch/sample.sbatch configs/sbatch/$ds.$ta.$patt.sbatch
             for i in {1..3}
               do
