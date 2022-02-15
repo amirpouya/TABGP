@@ -95,12 +95,12 @@ fn main() {
 
 
 
-    println!("{:?}",pattern_type.clone());
+    //println!("{:?}",pattern_type.clone());
 
 
 
     log(format!("Edges {:?}", edges),5,DEBUG_FLAG);
-    log(format!("NFA {:?}", nfa),0,DEBUG_FLAG);
+    log(format!("NFA {:?}", nfa),1,DEBUG_FLAG);
     log(format!("Active {:?}", actives),5,DEBUG_FLAG);
 
 
@@ -112,8 +112,8 @@ fn main() {
     let matching_time = now.elapsed().as_secs_f32();
 
     log(format!("Matching{:?}", &matching), 5,DEBUG_FLAG);
-    log(format!("Matching Size{:?}", &matching.len()),0,DEBUG_FLAG);
-    log(format!("Matching Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);
+    log(format!("Matching Size{:?}", &matching.len()),1,DEBUG_FLAG);
+    log(format!("Matching Time:{}", now.elapsed().as_millis()),1,DEBUG_FLAG);
 
     let mut current_time = 0;
     let mut current_active:Vec<Active> = vec![];
@@ -200,10 +200,10 @@ fn main() {
     }
     all_matching = TNFA::apply_nfa(current_time,&nfa_join, &all_matching);
     let  processed_matchg_count = matching.iter().filter(|m| m.last<=current_time).count();
-    log(format!("{:?},{:?},{:?}",now.elapsed(),&current_time, &processed_matchg_count),0,DEBUG_FLAG);
+    log(format!("{:?},{:?},{:?}",now.elapsed(),&current_time, &processed_matchg_count),1,DEBUG_FLAG);
 
-    log(format!("Total Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);
-    log(format!("Pattern_type, num_matching, matching_time, total_time"),0,DEBUG_FLAG);
+    log(format!("Total Time:{}", now.elapsed().as_millis()),1,DEBUG_FLAG);
+    log(format!("Pattern_type, num_matching, matching_time, total_time"),1,DEBUG_FLAG);
     log(format!("{},{},{},{}",pattern_type.clone(),all_matching.len(),matching_time, now.elapsed().as_secs_f32()),11,DEBUG_FLAG);
     log(format!("Full Matching {:?},{:?}", now.elapsed().as_secs_f32(), all_matching), 10, DEBUG_FLAG);
 
@@ -216,12 +216,13 @@ fn main() {
 
     let fstate: usize = 2 ;
     let unique_matching = current_matching.iter().filter(|m| m.state ==2).map(|m| m.eid.clone()).sorted_by(|m1,m2| m1.cmp(m2)).dedup().count();//.for_each(|m| println!("{:?},{:?}",m[0],m[1]));
-    println!("{:?}",unique_matching)
+    //println!("{:?}",unique_matching)
     // let mut f = File::create("od.csv").unwrap();
     // for m in all_matching{
     //    f.write(format!(" {:?}\n", m).as_ref());
     //
     // }
+    println!("{:?},{:?},{:?},{:?},{:?},{:?}/{:?}", &config.input_dir.replace("data/graphs/","").replace("/",""),pattern_type, nfa_filename.replace("data/nfa/","").replace(".csv",""),matching_time,now.elapsed().as_secs_f32(), current_matching.len(),num_matching);
 
 }
 

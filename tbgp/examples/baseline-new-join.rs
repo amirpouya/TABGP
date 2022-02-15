@@ -11,21 +11,9 @@ use itertools::__std_iter::FromIterator;
 use tbgp::active::Active;
 use tbgp::configs;
 use tbgp::edge::Edge;
-use tbgp::matching::Matching;
+use tbgp::matching::{Matching, NMatching};
 use tbgp::nfa::NFA;
 
-#[derive(Debug)]
-#[derive(Clone)]
-pub struct NMatching {
-    pub mid: usize,
-    pub eid: [usize; 5],
-    pub first: usize,
-    pub last: usize,
-    pub match_size: usize,
-    pub state: Vec<usize>,
-    pub word: usize,
-    pub clocks: [usize; 5],
-}
 
 
 
@@ -90,7 +78,7 @@ fn main() {
         first: m.first,
         last: m.last,
         match_size: m.match_size,
-        state: vec![m.state],
+        state: vec![m.state].into_iter().clone().collect(),
         word: m.word,
         clocks: m.clocks
     }).collect_vec();
@@ -105,7 +93,7 @@ fn main() {
     let mut current_active:Vec<Active> = vec![];
     let mut current_matching = matching.iter().filter(|m| m.first==current_time).cloned().collect_vec();
     //let mut current_matching = NFA::add_state_to_matching(&min_matching);
-
+    let mut accepted = 0 ;
 
     for a in actives{
 
@@ -117,7 +105,7 @@ fn main() {
             log(format!("current matching at {:?}: {:?}",current_time, &current_matching),3,DEBUG_FLAG);
             log(format!("current active at {:?}: {:?}",current_time, &current_active),3,DEBUG_FLAG);
 
-            apply_nfa(pattern_size, &nfa_dic, &mut current_matching, active_pair);
+            accepted = accepted + NFA::apply_new_nfa(pattern_size, &nfa_dic, &mut current_matching, active_pair);
 
 
             current_time = a.time;
@@ -141,31 +129,10 @@ fn main() {
     let fstate: usize = 2 ;
     //let unique_matching = current_matching.iter().filter(|m| m.state ==2).map(|m| m.eid.clone()).sorted_by(|m1,m2| m1.cmp(m2)).dedup().count();//.for_each(|m| println!("{:?},{:?}",m[0],m[1]));
 
-    //println!("{:?}",unique_matching);
+    println!("{:?}",accepted);
 
 }
 
-fn apply_nfa(pattern_size: usize, mut nfa_dic: &HashMap<&(usize, usize), Vec<usize>>, current_matching: &mut Vec<NMatching>, active_pair: HashSet<usize>)  {
-    for i in 0..current_matching.len() {
-        let mut m = &current_matching[i];
-        let word = NFA::bool_to_usize([
-                                          active_pair.contains(&m.eid[0]),
-                                          active_pair.contains(&m.eid[1]),
-                                          active_pair.contains(&m.eid[2]),
-                                          active_pair.contains(&m.eid[3]),
-                                          active_pair.contains(&m.eid[4]),
-                                      ], pattern_size);
-        let mut state = vec![];
-        let mut a = m.state.clone().into_iter()
-            .filter_map(|n| match nfa_dic.get(&(n, word)) {
-                Some(p) => Some(p.clone()),
-                None => None
-            }).flatten();
-        state.extend(a);
-        state.dedup();
-        current_matching[i].state = state;
-    }
-    current_matching.retain(|m| m.state.len() > 0);
-}
+
 
 

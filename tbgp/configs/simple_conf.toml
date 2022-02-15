@@ -1,5 +1,5 @@
 input_dir = "data/graphs/epl/"
-nfa_dir = "data/nfa/ta2.csv"
+nfa_dir = "data/nfa/ta1.csv"
 #nfa_dir = "data/nfa/nfa-multi-path/ta0-1-4.csv"
 debug =    0# 0  For nothing - 10 for everything
 

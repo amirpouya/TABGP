@@ -52,12 +52,12 @@ fn main() {
     let nfa_join = nfa.clone().into_iter().map(|n|((n.current_state,n.word),(n.next_state))).collect_vec();
 
 
-    println!("{:?}",pattern_type.clone());
+    //println!("{:?}",pattern_type.clone());
 
 
 
     log(format!("Edges {:?}", edges),5,DEBUG_FLAG);
-    log(format!("NFA {:?}", nfa),0,DEBUG_FLAG);
+    log(format!("NFA {:?}", nfa),1,DEBUG_FLAG);
     log(format!("Active {:?}", actives),5,DEBUG_FLAG);
 
 
@@ -67,8 +67,8 @@ fn main() {
     let matching_time = now.elapsed().as_secs_f32();
 
     log(format!("Matching{:?}", &matching), 5,DEBUG_FLAG);
-    log(format!("Matching Size{:?}", &matching.len()),0,DEBUG_FLAG);
-    log(format!("Matching Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);
+    log(format!("Matching Size{:?}", &matching.len()),1,DEBUG_FLAG);
+    log(format!("Matching Time:{}", now.elapsed().as_millis()),1,DEBUG_FLAG);
 
     let mut current_time = 1;
     let mut current_active:Vec<Active> = vec![];
@@ -131,19 +131,20 @@ fn main() {
     // }
     // current_matching = NFA::apply_nfa(&nfa_join, &current_matching,dedup_flag);
     //let processed_match = current_matching.iter().filter(|m| m.last <= current_time).count();
-    //log(format!("Total Time:{},{},{}", &current_time,now.elapsed().as_secs_f32(),processed_match),0,DEBUG_FLAG);
+    //log(format!("Total Time:{},{},{}", &current_time,now.elapsed().as_secs_f32(),processed_match),1,DEBUG_FLAG);
 
-  //  log(format!("Total Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);
-   // log(format!("Pattern_type, num_matching, matching_time, total_time"),0,DEBUG_FLAG);
+  //  log(format!("Total Time:{}", now.elapsed().as_millis()),1,DEBUG_FLAG);
+   // log(format!("Pattern_type, num_matching, matching_time, total_time"),1,DEBUG_FLAG);
 
 
-   // log(format!("{},{},{},{}",pattern_type.clone(),current_matching.len(),matching_time, now.elapsed().as_secs_f32()),0,DEBUG_FLAG);
-    log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), current_matching.len(),num_matching), 0, DEBUG_FLAG);
+   // log(format!("{},{},{},{}",pattern_type.clone(),current_matching.len(),matching_time, now.elapsed().as_secs_f32()),1,DEBUG_FLAG);
+    log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), current_matching.len(),num_matching), 1, DEBUG_FLAG);
 
     let fstate: usize = 2 ;
-    let unique_matching = current_matching.iter().filter(|m| m.state ==2).map(|m| m.eid.clone()).sorted_by(|m1,m2| m1.cmp(m2)).dedup().count();//.for_each(|m| println!("{:?},{:?}",m[0],m[1]));
+   // let unique_matching = current_matching.iter().filter(|m| m.state ==2).map(|m| m.eid.clone()).sorted_by(|m1,m2| m1.cmp(m2)).dedup().count();//.for_each(|m| println!("{:?},{:?}",m[0],m[1]));
 
-    println!("{:?}",unique_matching);
+    println!("{:?},{:?},{:?},{:?},{:?},{:?}/{:?}", &config.input_dir.replace("data/graphs/","").replace("/",""),pattern_type, nfa_filename.replace("data/nfa/","").replace(".csv",""),matching_time,now.elapsed().as_secs_f32(), current_matching.len(),num_matching);
+
 
 }
 

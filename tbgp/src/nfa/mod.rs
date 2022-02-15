@@ -9,7 +9,7 @@ use itertools::Itertools;
 
 use crate::active::Active;
 use crate::join::hash_join;
-use crate::matching::{Matching, PMatching};
+use crate::matching::{Matching, PMatching,NMatching};
 
 #[derive(Debug)]
 #[derive(Clone, Copy)]
@@ -244,6 +244,36 @@ impl NFA {
             nfas.push(nfa);
         }
         nfas
+    }
+
+
+    pub fn apply_new_nfa(pattern_size: usize, mut nfa_dic: &HashMap<&(usize, usize), Vec<usize>>, current_matching: &mut Vec<NMatching>, active_pair: HashSet<usize>) -> usize {
+        for i in 0..current_matching.len() {
+            let mut m = &current_matching[i];
+            let word = NFA::bool_to_usize([
+                                              active_pair.contains(&m.eid[0]),
+                                              active_pair.contains(&m.eid[1]),
+                                              active_pair.contains(&m.eid[2]),
+                                              active_pair.contains(&m.eid[3]),
+                                              active_pair.contains(&m.eid[4]),
+                                          ], pattern_size);
+            let mut state = HashSet::new();
+            let mut a = m.state.clone().into_iter()
+                .filter_map(|n| match nfa_dic.get(&(n, word)) {
+                    Some(p) => Some(p.clone()),
+                    None => None
+                }).flatten();
+            state.extend(a);
+            current_matching[i].state = state;
+        }
+        current_matching.retain(|m| m.state.len() > 0);
+        let cc = current_matching.len();
+        //current_matching.retain(|m| 2 m.state.d;
+        current_matching.retain(|m| !m.state.contains(&2) );
+
+        return cc- current_matching.len();
+
+
     }
 
 }

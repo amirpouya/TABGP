@@ -20,6 +20,21 @@ pub struct Matching {
     pub clocks: [usize; 5],
 }
 
+#[derive(Debug)]
+#[derive(Clone)]
+pub struct NMatching {
+    pub mid: usize,
+    pub eid: [usize; 5],
+    pub first: usize,
+    pub last: usize,
+    pub match_size: usize,
+    pub state: HashSet<usize>,
+    pub word: usize,
+    pub clocks: [usize; 5],
+}
+
+
+
 
 impl Matching {
     pub fn new(mid: usize, eid: [usize; 5], first: usize, match_size: usize, last: usize) -> Self {
@@ -178,7 +193,6 @@ impl Matching {
 
 
     pub fn cycle_two(edges: Vec<Edge>) -> Vec<Matching> {
-        println!("I am here");
         let edges_src = edges.iter()
             .map(|e| (e.src.clone(), e.clone()));
 
@@ -579,7 +593,8 @@ pub struct PMatching {
 impl PMatching {
     pub fn fill_array(val: usize, idx: i8, inp: [usize; 5]) -> [usize; 5] {
         if idx == -1 {
-            println!("{:?}", inp)
+
+            //println!("{:?}", inp)
         }
         let mut out = inp;
         out[idx as usize] = val;

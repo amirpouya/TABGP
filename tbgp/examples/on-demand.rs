@@ -97,12 +97,11 @@ fn main() {
 
 
 
-    println!("{:?}",pattern_type.clone());
 
 
 
     log(format!("Edges {:?}", edges),5,DEBUG_FLAG);
-    log(format!("NFA {:?}", nfa),0,DEBUG_FLAG);
+    log(format!("NFA {:?}", nfa),1,DEBUG_FLAG);
     log(format!("Active {:?}", actives),5,DEBUG_FLAG);
 
 
@@ -114,8 +113,8 @@ fn main() {
     let matching_time = now.elapsed().as_secs_f32();
 
     log(format!("Matching{:?}", &matching), 5,DEBUG_FLAG);
-    log(format!("Matching Size{:?}", &matching.len()),0,DEBUG_FLAG);
-    log(format!("Matching Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);
+    log(format!("Matching Size{:?}", &matching.len()),1,DEBUG_FLAG);
+    log(format!("Matching Time:{}", now.elapsed().as_millis()),1,DEBUG_FLAG);
 
     let mut current_time = 0;
     let mut current_active:Vec<Active> = vec![];
@@ -195,10 +194,10 @@ fn main() {
     }
     all_matching = NFA::apply_nfa(&nfa_join, &all_matching,dedup_flag);
     let  processed_matchg_count = matching.clone().into_iter().filter(|m| m.last<=current_time).count();
-    log(format!("{:?},{:?},{:?}",now.elapsed(),&current_time, &processed_matchg_count),0,DEBUG_FLAG);
+    log(format!("{:?},{:?},{:?}",now.elapsed(),&current_time, &processed_matchg_count),1,DEBUG_FLAG);
 
-    log(format!("Total Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);
-    log(format!("Pattern_type, num_matching, matching_time, total_time"),0,DEBUG_FLAG);
+    log(format!("Total Time:{}", now.elapsed().as_millis()),1,DEBUG_FLAG);
+    log(format!("Pattern_type, num_matching, matching_time, total_time"),1,DEBUG_FLAG);
     log(format!("{},{},{},{}",pattern_type.clone(),all_matching.len(),matching_time, now.elapsed().as_secs_f32()),11,DEBUG_FLAG);
     log(format!("Full Matching {:?},{:?}", now.elapsed().as_secs_f32(), all_matching), 10, DEBUG_FLAG);
 
@@ -206,7 +205,7 @@ fn main() {
 
 
 
-    log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), all_matching.len(),num_matching), 0, DEBUG_FLAG);
+    println!("{:?},{:?},{:?},{:?},{:?},{:?}/{:?}", &config.input_dir.replace("data/graphs/","").replace("/",""),pattern_type, nfa_filename.replace("data/nfa/","").replace(".csv",""),matching_time,now.elapsed().as_secs_f32(), all_matching.len(),num_matching);
 
 
 

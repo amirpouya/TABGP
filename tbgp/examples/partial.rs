@@ -72,11 +72,11 @@ fn main() {
     let nfa_join = nfa.clone().into_iter().map(|n| ((n.current_state, n.word), (n.next_state))).collect_vec();
 
 
-    println!("{:?}", pattern_type.clone());
+    //println!("{:?}", pattern_type.clone());
 
 
     log(format!("Edges {:?}", edges), 5, DEBUG_FLAG);
-    log(format!("NFA {:?}", nfa.iter().map(|n| (n.current_state, n.word, n.next_state)).collect_vec()), 0, DEBUG_FLAG);
+    log(format!("NFA {:?}", nfa.iter().map(|n| (n.current_state, n.word, n.next_state)).collect_vec()), 1,DEBUG_FLAG);
     log(format!("Active {:?}", actives), 5, DEBUG_FLAG);
 
 
@@ -1017,8 +1017,9 @@ fn main() {
     }
     let full_matching = matching.iter().filter(|m| m.match_size == pattern_size && m.eid[0] != 0).map(|m| (m.eid)).sorted_by(|m1,m2|m1.cmp(m2)).collect_vec();
     log(format!("Full Matching {:?}", &full_matching), 1, DEBUG_FLAG);
-    log(format!("{:?},{:?}", now.elapsed().as_secs_f32(), full_matching.len()), 0, DEBUG_FLAG);
+    log(format!("{:?},{:?}", now.elapsed().as_secs_f32(), full_matching.len()), 1,DEBUG_FLAG);
 
+    println!("{:?},{:?},{:?},{:?},{:?},{:?}/{:?}", &config.input_dir.replace("data/graphs/","").replace("/",""),pattern_type, nfa_filename.replace("data/nfa/","").replace(".csv",""),0,now.elapsed().as_secs_f32(), 0,full_matching.len());
 
     // let mut f = File::create("part.csv").unwrap();
     // for m in full_matching.into_iter().sorted_by(|m1,m2| m1.1.cmp(&m2.1)){

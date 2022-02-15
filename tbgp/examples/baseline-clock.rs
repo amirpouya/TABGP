@@ -52,12 +52,12 @@ fn main() {
 
     let nfa_join = nfa.clone().into_iter().map(|n|((n.nfa.current_state,n.nfa.word),(n))).collect_vec();
 
-    println!("{:?}",pattern_type.clone());
+    //println!("{:?}",pattern_type.clone());
 
 
 
     log(format!("Edges {:?}", edges),5,DEBUG_FLAG);
-    log(format!("NFA {:?}", nfa),0,DEBUG_FLAG);
+    log(format!("NFA {:?}", nfa),1,DEBUG_FLAG);
     log(format!("Active {:?}", actives),5,DEBUG_FLAG);
 
 
@@ -69,8 +69,8 @@ fn main() {
     let matching_time = now.elapsed().as_secs_f32();
 
     log(format!("Matching{:?}", &matching), 5,DEBUG_FLAG);
-    log(format!("Matching Size{:?}", &matching.len()),0,DEBUG_FLAG);
-    log(format!("Matching Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);
+    log(format!("Matching Size{:?}", &matching.len()),1,DEBUG_FLAG);
+    log(format!("Matching Time:{}", now.elapsed().as_millis()),1,DEBUG_FLAG);
 
     let mut current_time = 1;
     let mut current_active:Vec<Active> = vec![];
@@ -138,15 +138,15 @@ fn main() {
     let new_accept_matching = current_matching.iter().filter(|m|m.state==2).count();
     accept_matching = accept_matching + new_accept_matching;
     let processed_match = current_matching.iter().filter(|m| m.last <= current_time).count();
-    log(format!("Total Time:{},{},{}", &current_time,now.elapsed().as_secs_f32(),processed_match),0,DEBUG_FLAG);
+    log(format!("Total Time:{},{},{}", &current_time,now.elapsed().as_secs_f32(),processed_match),1,DEBUG_FLAG);
 
-    log(format!("Total Time:{}", now.elapsed().as_millis()),0,DEBUG_FLAG);
-    log(format!("Pattern_type, num_matching, matching_time, total_time"),0,DEBUG_FLAG);
+    log(format!("Total Time:{}", now.elapsed().as_millis()),1,DEBUG_FLAG);
+    log(format!("Pattern_type, num_matching, matching_time, total_time"),1,DEBUG_FLAG);
 
     log(format!("Full Matching {:?},{:?}", now.elapsed().as_secs_f32(), current_matching), 10, DEBUG_FLAG);
 
-    log(format!("{},{},{},{}",pattern_type.clone(),current_matching.len(),matching_time, now.elapsed().as_secs_f32()),0,DEBUG_FLAG);
-    log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), accept_matching,num_matching), 0, DEBUG_FLAG);
+    log(format!("{},{},{},{}",pattern_type.clone(),current_matching.len(),matching_time, now.elapsed().as_secs_f32()),1,DEBUG_FLAG);
+    log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), accept_matching,num_matching), 1, DEBUG_FLAG);
 
 
     // let mut f = File::create("base.csv").unwrap();
@@ -154,6 +154,7 @@ fn main() {
     //     f.write(format!(" {:?}\n", m.eid).as_ref());
     //
     // }
+    println!("{:?},{:?},{:?},{:?},{:?},{:?}/{:?}", &config.input_dir.replace("data/graphs/","").replace("/",""),pattern_type, nfa_filename.replace("data/nfa/","").replace(".csv",""),matching_time,now.elapsed().as_secs_f32(), current_matching.len(),num_matching);
 
 
 }
