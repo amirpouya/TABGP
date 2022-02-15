@@ -15,7 +15,7 @@ for ds in epl #eu-email facebook
             python3 configs/config.gen.py -i $ds -t $ta -p $patt -s 2 -d 0 > $tfile
             cp configs/sbatch/sample-sbatch configs/sbatch/$ds.$ta.$patt.sbatch
             echo "sbatch configs/sbatch/$ds.$ta.$patt.sbatch" >> exprs.sh
-            echo "#SBATCH --output=expr-res/$ds.$ta.$patt.csv\n\n\n" >> configs/sbatch/$ds.$ta.$patt.sbatch
+            echo "#SBATCH --output=expr-res/$ds.$ta.$patt.csv" >> configs/sbatch/$ds.$ta.$patt.sbatch
             for i in {1..3}
               do
                 echo   "./target/release/examples/baseline $tfile">> configs/sbatch/$ds.$ta.$patt.sbatch
@@ -54,9 +54,9 @@ for ds in epl #eu-email facebook
 
             for i in {1..3}
               do
-                echo   "./target/release/examples/baseline-clock $tfile">> configs/sbatch/$ds.$ta.$patt.sbatch
-                echo   "./target/release/examples/on-demand-clock $tfile">> configs/sbatch/$ds.$ta.$patt.sbatch
-                echo   "./target/release/examples/partial-clock $tfile">> configs/sbatch/$ds.$ta.$patt.sbatch
+                echo   "./target/release/examples/baseline $tfile">> configs/sbatch/$ds.$ta.$patt.sbatch
+                echo   "./target/release/examples/on-demand $tfile">> configs/sbatch/$ds.$ta.$patt.sbatch
+                echo   "./target/release/examples/partial $tfile">> configs/sbatch/$ds.$ta.$patt.sbatch
               done
       done
     done
