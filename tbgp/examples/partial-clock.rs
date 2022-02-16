@@ -1034,7 +1034,7 @@ fn main() {
     log(format!("Full Matching {:?}", &full_matching), 4, DEBUG_FLAG);
     log(format!("{:?},{:?}/{:?}", now.elapsed().as_secs_f32(), full_matching.len(),droped_match+full_matching.len()), 1,DEBUG_FLAG);
 
-    println!("pt,c{:?},{:?},{:?},{:?},{:?},{:?}/{:?}", &config.input_dir.replace("data/graphs/","").replace("/",""),pattern_type, nfa_filename.replace("data/nfa/","").replace(".csv",""),0,now.elapsed().as_secs_f32(), 0,full_matching.len());
+    println!("pt,c,{:?},{:?},{:?},{:?},{:?},{:?}/{:?}", &config.input_dir.replace("data/graphs/","").replace("/",""),pattern_type, nfa_filename.replace("data/nfa/","").replace(".csv",""),0,now.elapsed().as_secs_f32(), 0,full_matching.len());
 
     // let mut f = File::create("part.csv").unwrap();
     // for m in full_matching.into_iter().sorted_by(|m1,m2| m1.1.cmp(&m2.1)){

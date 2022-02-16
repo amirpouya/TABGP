@@ -1,5 +1,5 @@
 import sys, getopt
-
+#epl.ta0-4.path4.toml  epl.ta0-4.rectangle.toml  eu-email.ta0-4.path4  eu-email.ta0-4.rectange.toml
 def main(argv):
     inputfile = ''
     nfafile = ''
@@ -35,7 +35,7 @@ def main(argv):
     out = out + 'input_dir = "data/graphs/' + inputfile + '/"\n'
     out = out + 'nfa_dir = "data/nfa/' + nfafile + '.csv"\n'
     out = out + 'debug =' + debugconfig + '\n'
-    out = out + 'pattern_type = " ' + pattern_type+ '"\n'
+    out = out + 'pattern_type = "' + pattern_type+ '"\n'
     out = out +  'pattern_size = ' + pattern_size + '\n'
     print(out)
 
