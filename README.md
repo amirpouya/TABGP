@@ -1,8 +1,7 @@
 # TABGP
-Prototype for Sigmod Submission.
+Supplementary materials for conference submission.
 
 ## How to run? 
-
 You need Rust to run this code
 https://www.rust-lang.org/learn/get-started
 
