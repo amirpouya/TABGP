@@ -1,5 +1,5 @@
 input_dir = "data/graphs/eu-email/"
-nfa_dir = "data/nfa/ta2.csv"
+nfa_dir = "data/nfa/ta4-2.csv"
 #nfa_dir = "data/nfa/nfa-multi-path/ta0-1-4.csv"
 debug =    0# 0  For nothing - 10 for everything
 
@@ -14,6 +14,6 @@ pattern_type = "path2"
 #pattern_type = "instar_3"
 #pattern_type = "outstar_2"
 #pattern_type = "outstar_3"
-
-
 pattern_size = 2
+
+

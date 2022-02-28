@@ -10,7 +10,7 @@ for ds in 0 4 8 16 32 64 128 256 512 1024
   do
     cp data/nfa/Ta2-Clock/ta2X.csv data/nfa/Ta2-Clock/ta2-$ds.csv
     ofile=data/nfa/Ta2-Clock/ta2-$ds.csv
-    sed -i '' "s/XX/$ds/g" "$ofile"
+    sed -i  "s/XX/$ds/g" "$ofile"
     tfile="configs/toml-clock/$ds.toml"
     python3 configs/config.gen.py -i eu-email -t Ta2-Clock/ta2-$ds -p path2 -s 2 -d 0 > $tfile
     cp configs/sbatch-epl/sample-sbatch configs/sbatch-clock/$ds.sbatch

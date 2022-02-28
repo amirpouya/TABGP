@@ -48,7 +48,6 @@ fn main() {
         }
     }
 
-    let now = Instant::now();
 
 
     let filename = config.input_dir.clone() + "/edge.csv";
@@ -94,6 +93,7 @@ fn main() {
         word: 0,
         clocks:[0,0,0,0,0]
     }];
+    let now = Instant::now();
 
     let mut dic_state: HashMap<[usize; 5], Vec<usize>> = HashMap::new();
     dic_state.insert([0, 0, 0, 0, 0], vec![0]);
