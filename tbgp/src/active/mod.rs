@@ -72,9 +72,4 @@ impl  Active {
         }
         return active;
     }
-
-
-
-
-
 }
