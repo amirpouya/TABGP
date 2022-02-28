@@ -30,7 +30,7 @@ fn main() {
 
     
     //Set these flags based on the NFA
-    let inc_flag = true; // Incremental NFA
+    let inc_flag = false; // Incremental NFA
     let dec_flag = false; // Decremental NFA
     let eq_flag = true; // Equal NFA
 
